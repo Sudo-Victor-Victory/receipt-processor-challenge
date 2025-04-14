@@ -6,4 +6,5 @@ services:
       dockerfile: Dockerfile
     image: receipt-processor:latest
     ports:
-      - 1313:1313
+      - "1313:1313"
+    command: go run main.go
