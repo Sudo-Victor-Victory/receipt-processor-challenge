@@ -1,0 +1,9 @@
+services:
+  receipt-processor:
+    container_name: receipt-processor
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: receipt-processor:latest
+    ports:
+      - 1313:1313
