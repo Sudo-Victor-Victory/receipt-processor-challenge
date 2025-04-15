@@ -7,4 +7,4 @@ services:
     image: receipt-processor:latest
     ports:
       - "1313:1313"
-    command: go run main.go
+    command: go run point_calculation_logic.go main.go

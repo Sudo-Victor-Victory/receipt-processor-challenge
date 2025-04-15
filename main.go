@@ -1,10 +1,6 @@
 package main
 import (
 	"net/http"
-	"unicode"
-	"strings"
- 	"math"
-	"time"
 	"strconv"
 	"errors"
 	"fmt"
@@ -32,7 +28,6 @@ var receiptsMap = make(map[string]Receipt)
 // Used to convert a string to date.
 func add_receipt(context *gin.Context){
 	var newReceipt Receipt
-
 	// Attempts to convert JSON within request to our todo type.
 	if err := context.BindJSON(&newReceipt); err != nil{
 		context.IndentedJSON(http.StatusBadRequest, gin.H{"Error": "Could not transform json into Receipt"})
@@ -59,66 +54,44 @@ func get_receipt_by_id(id string) (*Receipt, error){
 }
 
 func process_id(receipt *Receipt) (int, error){
-	layout := "2006-01-02" 
 	var points int = 0
+	var temp_points int = 0
 	// One point for every alphanumeric character in Retailer
-	for _, r := range receipt.Retailer{
-		if unicode.IsLetter(r) || unicode.IsDigit(r) {
-			points++
-		}
-	}
+	points += points_retailer(receipt.Retailer)
 	fmt.Println("Points after Retailer:", points)
 
-
 	// Checks if the total is a multiple of 0.25
-	f, err := strconv.ParseFloat(receipt.Total, 64)
+	temp_points, err := points_multiple_of_25(receipt.Total)
 	if err != nil {
-	   fmt.Println("Error:", err)
-	   return 0, err
+		fmt.Println("Could not convert Receipt total to float during points_multiple check: ", err)
+		return 0, err
 	}
-	if math.Mod(f , 0.25) == 0 {
-		fmt.Println("Points after Total being a multiple of 0.25:", points)
-		points+=25
-	}
-
+	points += temp_points
+	fmt.Println("Points after multiple of 0.25 check:", points)
 
 	// points every 5 points for evey 2 items
-	var  number_of_items int = len(receipt.Items) / 2
-	points +=  number_of_items * 5
+	points += points_per_2_items(len(receipt.Items))
 	fmt.Println("Points after # of items:", points)
 
-
 	// For every item description, if the len of description % 3 == 0 multiply by 0.2, round, and add to points.
-	for _, r := range receipt.Items {
-		if len(strings.TrimSpace(r.ShortDescription)) % 3 ==0 {
-			price, _ := strconv.ParseFloat(r.Price, 64)
-			points += int(math.Ceil(( float64(price) * 0.2)))
-		}
-	}
+	points += points_per_item_description(receipt.Items)
 	fmt.Println("Points after Item Descriptions :", points)
+
 	// Check if purchase date is odd
-	parsedDate, err := time.Parse(layout, receipt.PurchaseDate)
+	temp_points, err = points_odd_day(receipt.PurchaseDate)
 	if err != nil {
-		fmt.Println("Error parsing time string:", err)
-		return 0, errors.New("Time string is formatted incorrectly")
+		fmt.Println("Could not get points for odd day: ", err)
 	}
+	points += temp_points
+	fmt.Println("Points after odd day:", points)
 
-	if parsedDate.Day() % 2 != 0 {
-		points += 6
-		fmt.Println("Points after odd day:", points)
-
-	}
 	// Check if purchase time is between 2 and 4 PM.
-	start:= "14:00"
-	end :=  "16:00"
-	if start < receipt.PurchaseTime && receipt.PurchaseTime < end {
-		fmt.Println("Points if between 2 and 4", points)
-		points += 10
-	}
+	points += points_between_time(receipt.PurchaseTime)
+	fmt.Println("Points if between 2 and 4", points)
 	return points, nil
 }
 
-func get_receipt_handler(context *gin.Context){
+func get_receipt_points_handler(context *gin.Context){
 	id := context.Param("id")
 	receipt, err := get_receipt_by_id(id)
 	if err != nil {
@@ -136,6 +109,6 @@ func get_receipt_handler(context *gin.Context){
 func main(){
 	router := gin.Default()
 	router.POST("/receipts/process", add_receipt)
-	router.GET("/receipts/:id/points", get_receipt_handler)
+	router.GET("/receipts/:id/points", get_receipt_points_handler)
 	router.Run("localhost:1313")
 }
