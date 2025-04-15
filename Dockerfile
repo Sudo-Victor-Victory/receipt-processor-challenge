@@ -12,6 +12,7 @@ RUN go get github.com/stretchr/testify
 RUN go get github.com/stretchr/testify/assert@v1.10.0
 
 COPY main.go .
-COPY point_calculation_logic.go . 
 COPY main_test.go . 
+COPY point_calculation_logic.go . 
+COPY point_calculation_logic_test.go . 
 
