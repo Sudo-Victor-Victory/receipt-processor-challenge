@@ -3,13 +3,7 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/go-playground/validator/v10"
 )
-
-var validate *validator.Validate
-func init() {
-    validate = validator.New()
-}
 
 // Represents the items within a customer's Receipt.
 type Item struct {
@@ -18,13 +12,14 @@ type Item struct {
 }
 
 type Receipt struct {
-    Retailer      string `json:"retailer" validate:"required"`
-    PurchaseDate  string `json:"purchaseDate" validate:"required"`
-    PurchaseTime  string `json:"purchaseTime" validate:"required"`
-    Items         []Item `json:"items" validate:"required,dive"`
-    Total         string `json:"total" validate:"required"`
+    Retailer      string `json:"retailer" binding:"required"`
+    PurchaseDate  string `json:"purchaseDate" binding:"required"`
+    PurchaseTime  string `json:"purchaseTime" binding:"required"`
+    Items         []Item `json:"items" binding:"required,dive"`
+    Total         string `json:"total" binding:"required"`
 }
 
+// Create a Map to store our IDs to Receipts.  
 var receiptsMap = make(map[string]Receipt)
 
 func add_receipt(context *gin.Context){
@@ -36,16 +31,11 @@ func add_receipt(context *gin.Context){
 		return
 	}
 
-    // Validate the receipt
-	if err := validate.Struct(newReceipt); err != nil {
-        context.IndentedJSON(http.StatusBadRequest, gin.H{"Error": "Validation failed", "details": err.Error()})
-        return
-    }
-
 	// Convert to string otherwise incompatable with Golang's map.
 	newID := uuid.New().String()
 	// Adds ID : Receipt to Map.
 	receiptsMap[newID] = newReceipt
+	// Returns {ID: theNewID} to the user
 	context.IndentedJSON(http.StatusCreated, "id:" + newID)
 }
 
