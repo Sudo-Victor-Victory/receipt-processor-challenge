@@ -30,7 +30,7 @@ func add_receipt(context *gin.Context){
 	var newReceipt Receipt
 	// Attempts to convert JSON within request to our todo type.
 	if err := context.BindJSON(&newReceipt); err != nil{
-		context.IndentedJSON(http.StatusBadRequest, gin.H{"Error": "Could not transform json into Receipt"})
+		context.JSON(http.StatusBadRequest, gin.H{"Error": "Could not transform json into Receipt"})
 		return
 	}
 
@@ -39,7 +39,7 @@ func add_receipt(context *gin.Context){
 	// Adds ID : Receipt to Map.
 	receiptsMap[newID] = newReceipt
 	// Returns {ID: theNewID} to the user
-	context.IndentedJSON(http.StatusCreated, "id:" + newID)
+	context.JSON(http.StatusCreated, gin.H{"id": newID})
 }
 
 
@@ -105,16 +105,16 @@ func get_receipt_points_handler(context *gin.Context){
 	id := context.Param("id")
 	receipt, err := get_receipt_by_id(id)
 	if err != nil {
-		context.IndentedJSON(http.StatusNotFound, gin.H{"message": "Receipt not found"})
+		context.JSON(http.StatusNotFound, gin.H{"message": "Receipt not found"})
 		return
 	}
 	// Process id
 	points, err := process_id(receipt)
 	if err != nil {
-		context.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Error in processing receipt field in points calculation"})
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Error in processing receipt field in points calculation"})
 	}
 	return_string := strconv.Itoa(points)
-	context.IndentedJSON(http.StatusOK, "points:" + return_string);
+	context.JSON(http.StatusOK, gin.H{"points": return_string});
 }
 func main(){
 	router := gin.Default()
