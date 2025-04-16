@@ -14,7 +14,6 @@ import (
 // One point for every alphanumeric character in Retailer
 func points_retailer(retailer string) int  {
 	var points int = 0
-	// One point for every alphanumeric character in Retailer
 	for _, r := range retailer{
 		if unicode.IsLetter(r) || unicode.IsDigit(r) {
 			points++
@@ -23,9 +22,23 @@ func points_retailer(retailer string) int  {
 	return points
 }
 
+// Checks if the Receipt total is a round dollar
+func points_round_dollar_amount(pointTotal string) (int, error) {
+	points_as_float, err := strconv.ParseFloat(pointTotal, 64)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return 0, err
+	}
+	// Math.mod is required because base operator % only works for Ints.
+	if math.Mod(points_as_float , 1.0) == 0 {
+		//fmt.Println("Points after Total being a multiple of 0.25:", points)
+		return 50, nil
+	}
+	return 0, nil
+}
+
 // Checks if the Receipt total is a multiple of 0.25
 func points_multiple_of_25(pointTotal string) (int, error) {
-	// Checks if the total is a multiple of 0.25
 	points_as_float, err := strconv.ParseFloat(pointTotal, 64)
 	if err != nil {
 		fmt.Println("Error:", err)

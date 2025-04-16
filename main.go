@@ -60,8 +60,18 @@ func process_id(receipt *Receipt) (int, error){
 	points += points_retailer(receipt.Retailer)
 	fmt.Println("Points after Retailer:", points)
 
+	// Checks if the total is a round-dollar amount
+	temp_points, err := points_round_dollar_amount(receipt.Total)
+	if err != nil {
+		fmt.Println("Could not convert Receipt total to float during points_round_dollar_amount check: ", err)
+		return 0, err
+	}
+	points += temp_points
+	fmt.Println("Points after round Receipt Total check:", points)
+
+
 	// Checks if the total is a multiple of 0.25
-	temp_points, err := points_multiple_of_25(receipt.Total)
+	temp_points, err = points_multiple_of_25(receipt.Total)
 	if err != nil {
 		fmt.Println("Could not convert Receipt total to float during points_multiple check: ", err)
 		return 0, err

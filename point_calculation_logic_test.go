@@ -24,6 +24,24 @@ func Test_Point_Retailer_Non_Empty(t *testing.T) {
 	assert.Equal(t, temp_points, 6)
 }
 
+func Test_Receipt_Total_Round_FAILURE(t *testing.T){
+	// 																GIVEN
+	receipt_total := "2.79"
+	//																WHEN
+	temp_points,_ := points_round_dollar_amount(receipt_total)
+	//																THEN
+	assert.Equal(t, temp_points, 0)
+}
+
+func Test_Receipt_Total_Round_SUCCESS(t *testing.T){
+	// 																GIVEN
+	receipt_total := "3.00"
+	//																WHEN
+	temp_points,_ := points_round_dollar_amount(receipt_total)
+	//																THEN
+	assert.Equal(t, temp_points, 50)
+}
+
 func Test_Receipt_Total_Multiple_Of_25_Failure(t *testing.T){
 	// 																GIVEN
 	receipt_total := "2.79"
