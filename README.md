@@ -30,10 +30,10 @@ Straightforward.
 3. docker-compose build receipt-processor
 4. docker-compose run receipt-processor
 You'll know you succeeded when you see `[GIN-debug] Listening and serving HTTP on localhost:1313`
-5. In a new command window (git bash, bash, linux terminal, etc) 
+5. Open a new command window (git bash, bash, linux terminal, etc) 
 
 The rest of these commands are optional if you know what you are doing. Here's what I did
-1. Run docker ps
+1. Run docker ps in the new command window
 2. Look at the **contianer ID** for the image named **receipt-processor:latest**
 3. Run ```docker exec -it 3cc4f55b270b sh``` 
 
@@ -84,11 +84,6 @@ This is the **GET** Request for the **/receipts/:id/points**  endpoint.
 ### Sample GET response
 ```{"points":"28"}```
 
-## Submitting Your Solution
-
-Provide a link to a public repository, such as GitHub or BitBucket, that contains your code to the provided link through Greenhouse.
-
----
 
 # Running the tests
 Within this Repo there are tests that can be ran to verify the accuracy of my functions. 
