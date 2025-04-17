@@ -27,10 +27,11 @@ Straightforward.
 
 1. Download the repo
 2. Enter directory of receipt-processor-challenge
-3. docker-compose build receipt-processor
-4. docker-compose run receipt-processor
+3. Open a command window (git bash, bash, linux terminal, etc)
+4. Run `docker-compose build receipt-processor`
+5. Run `docker-compose run receipt-processor`
 You'll know you succeeded when you see `[GIN-debug] Listening and serving HTTP on localhost:1313`
-5. Open a new command window (git bash, bash, linux terminal, etc) 
+6. Open a new command window (git bash, bash, linux terminal, etc) 
 
 The rest of these commands are optional if you know what you are doing. Here's what I did
 1. Run docker ps in the new command window
