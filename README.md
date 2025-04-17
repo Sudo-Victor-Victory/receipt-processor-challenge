@@ -46,7 +46,8 @@ Also fairly straightforward. Once your server is up (serving on localhost:1313) 
 
 ### Sample Post cURL request command
 This is the **POST** Request for the **/receipts/process endpoint**.
-```curl -v --header "Content-Type: application/json" \
+```
+curl --header "Content-Type: application/json" \
   --request POST \
   --data '{
     "retailer": "Target",
